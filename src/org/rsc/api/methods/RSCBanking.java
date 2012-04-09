@@ -1,5 +1,19 @@
 package org.rsc.api.methods;
 
+import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.methods.input.Keyboard;
+import org.powerbot.game.api.methods.input.Mouse;
+import org.powerbot.game.api.methods.node.Locations;
+import org.powerbot.game.api.methods.node.Menu;
+import org.powerbot.game.api.methods.tab.Inventory;
+import org.powerbot.game.api.util.Random;
+import org.powerbot.game.api.util.Time;
+import org.powerbot.game.api.wrappers.node.Item;
+import org.powerbot.game.api.wrappers.node.Location;
+import org.powerbot.game.api.wrappers.widget.WidgetChild;
+import org.powerbot.game.api.util.Filter;
+
+
 
 /**
  * @author Xel
@@ -7,6 +21,7 @@ package org.rsc.api.methods;
  */
 
 public enum RSCBanking{
+	//TODO IDS & Methods
 	/**
 	 * The east bank is south of Falador Park and north of the mining guild entrance. 
 	 */
@@ -74,7 +89,7 @@ public enum RSCBanking{
 	/**
 	 * A bank chest sits in the area with the Major. 
 	 */
-	BURTHORPE(0),
+	BURTHORPE(2738),
 	/**
 	 * Warriors' Guild west of Burthope, on the ground floor. Requires a combined Attack and Strength level of 130 or either 99 Attack or 99 Strength
 	 */
@@ -305,7 +320,91 @@ public enum RSCBanking{
 	this.id = id;
 	}
 	
+	public int getId(){
+		return id;
+	}
 	
+	/**
+	 * @return true if bank is open
+	 */
+	public static boolean isOpen(){
+		WidgetChild[] bankscreen = bank();
+		for (WidgetChild child : bankscreen){
+			if (child.isVisible()){
+				return true;
+			}
+		}
+		return false;
+	}
 	
+	private static WidgetChild[] bank(){
+		return Widgets.get(762, 95).getChildren();
+	}
 	
-}
+
+	
+	public boolean openBank(){	
+		return true;
+		//TODO
+	}
+	
+	/**
+	 * @param id item id
+	 * @param amount amount of items, 0 = all
+	 * @return withdraw items
+	 */
+	public static boolean withDraw(int id, int amount){
+		for (WidgetChild item : bank()){
+			if (item.getChildId() == id){
+				Mouse.click(item.getRelativeX()+40, item.getRelativeY()+100, false);
+				if (amount == 0) return Menu.select("Withdraw-All");
+                if (amount == 1) return Menu.select("Withdraw-1");
+                if (amount == 5) return Menu.select("Withdraw-5");
+                if (amount == 10) return Menu.select("Withdraw-10");
+                if (amount != 0 && amount != 1 && amount != 5 && amount != 10){
+                	Menu.select("Withdraw-X");
+                	Time.sleep(Random.nextInt(1500, 2000));
+                	Keyboard.sendText(Integer.toString(amount), true);
+                	return true;
+                }
+
+			}
+		}
+		return false;
+	}
+	/**
+	 * @param id item id, if id == 0 then deposit all
+	 * @param amount amount of items
+	 * @return deposit items
+	 */
+	public static boolean Deposit(int id, int amount){
+		if (id == 0){
+			WidgetChild depositall = Widgets.get(762, 34);
+			return depositall.click(true);
+		}
+		Item[] depo = Inventory.getItems();
+		for (int i = 0 ; i < depo.length ; i++){
+			if (depo[i].getId() == id){
+				WidgetChild depositthis = depo[i].getWidgetChild();
+				Mouse.click(depositthis.getRelativeX()+40, depositthis.getRelativeY()+100, false);
+				
+				if (amount == 1) 
+					return Menu.select("Deposit-1");
+				if (amount == 5)
+					return Menu.select("Deposit-5");
+				if (amount == 10)
+					return Menu.select("Deposit-10");
+				if (amount != 1 && amount != 5 && amount != 10){
+					Menu.select("Deposit-X");
+				Time.sleep(Random.nextInt(1500, 2000));
+				Keyboard.sendText(Integer.toString(amount), true);
+				return true;
+				}			
+				}
+	
+			}
+		return false;
+			
+		}
+	}
+	
