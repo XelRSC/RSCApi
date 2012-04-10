@@ -2,9 +2,10 @@ package org.rsc.api.methods.magic;
 
 import org.powerbot.game.api.methods.Tabs;
 import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.util.Time;
 import org.powerbot.game.api.wrappers.widget.Widget;
-import org.rsc.api.methods.RSCPlayer;
+
 
 
 /**
@@ -80,11 +81,11 @@ public enum RSCTeleport {
 		}
 		
 
-		public int getId() {
+	public int getId() {
 			return id;
 		}
 		
-		public int teleAnim(){
+		private int teleAnim(){
 			return 0; //TODO
 		}
 		
@@ -92,8 +93,9 @@ public enum RSCTeleport {
 		 * Teleports player
 		 */
 		public void tele(){
+			System.out.println("TELE");
+			System.out.println(id);
 			if (tabopen()){	
-				Time.sleep(500);
 				Spellbook().getChild(id).click(true);
 				if (!didTele()){
 					tele();
@@ -105,26 +107,24 @@ public enum RSCTeleport {
 			}
 		}
 		
-		public boolean didTele(){
-			if (RSCPlayer.playerAnim() == teleAnim()){
-				return true;
-			}
-			return false;
+		private boolean didTele(){
+				return Players.getLocal().getAnimation() == teleAnim();
 		}
 		
-		public boolean openTab(){
+		private boolean openTab(){
 			return Tabs.MAGIC.open();
 		}		
 
-		public static boolean tabopen(){
-			return true;
+		private boolean tabopen(){
+			return Tabs.getCurrent() == Tabs.MAGIC;
 		}
 		
-		public int getSpellbook(){
-			return 1; //TODO
+		private int getSpellbook(){
+			//Returns normal spellbook atm
+			return 192; //TODO
 		}
 		
-		public Widget Spellbook(){
+		private Widget Spellbook(){
 			return Widgets.get(getSpellbook());
 		}
 	
