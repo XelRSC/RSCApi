@@ -2,8 +2,10 @@ package org.rsc.api.methods.magic;
 
 import org.powerbot.game.api.methods.Tabs;
 import org.powerbot.game.api.methods.Widgets;
+import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.util.Time;
 import org.powerbot.game.api.wrappers.widget.Widget;
+
 
 
 /**
@@ -13,15 +15,15 @@ import org.powerbot.game.api.wrappers.widget.Widget;
  *
  */
 public enum RSCTeleport {
-	HOME(0),
-	MOBILISINGARMIES(0),
-	VARROCK(0),
-	LUMBRIDGE(0),
-	FALADOR(0),
-	HOUSE(0),
-	CAMELOT(0),
-	ARDOUGNE(0),
-	WATCHTOWER(0),
+	HOME(47),
+	MOBILISINGARMIES(55),
+	VARROCK(64),
+	LUMBRIDGE(67),
+	FALADOR(70),
+	HOUSE(72),
+	CAMELOT(75),
+	ARDOUGNE(99),
+	WATCHTOWER(85),
 	TROLLHEIM(0),
 	APOATOLL(0),
 	EDGEVILLEHOME(0),
@@ -79,13 +81,25 @@ public enum RSCTeleport {
 		}
 		
 
-		public int getId() {
+	public int getId() {
 			return id;
 		}
 		
+		private int teleAnim(){
+			return 0; //TODO
+		}
+		
+		/**
+		 * Teleports player
+		 */
 		public void tele(){
-			if (tabopen()){			
+			System.out.println("TELE");
+			System.out.println(id);
+			if (tabopen()){	
 				Spellbook().getChild(id).click(true);
+				if (!didTele()){
+					tele();
+				}
 			}else{
 				openTab();
 				Time.sleep(500);
@@ -93,19 +107,24 @@ public enum RSCTeleport {
 			}
 		}
 		
-		public boolean openTab(){
+		private boolean didTele(){
+				return Players.getLocal().getAnimation() == teleAnim();
+		}
+		
+		private boolean openTab(){
 			return Tabs.MAGIC.open();
 		}		
 
-		public static boolean tabopen(){
-			return true;
+		private boolean tabopen(){
+			return Tabs.getCurrent() == Tabs.MAGIC;
 		}
 		
-		public int getSpellbook(){
-			return 1; //TODO
+		private int getSpellbook(){
+			//Returns normal spellbook atm
+			return 192; //TODO
 		}
 		
-		public Widget Spellbook(){
+		private Widget Spellbook(){
 			return Widgets.get(getSpellbook());
 		}
 	
